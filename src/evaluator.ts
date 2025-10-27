@@ -1,77 +1,44 @@
 import { join } from "path";
+import type { Strana, VysledekRepubliky } from "./types";
+import { vyhodnotPocetMandatuProKraje } from "./vypocet-poctu-krajskych-mandatu";
 
-const { readFileSync } = require('fs');
-const { parseStringPromise } = require('xml2js');
-interface Strana {
-    nazev: string;
-    hlasy: number;
-}
-interface VysledekKraje {
-    kraj: string;
-    platneHlasy: number;
-    strany: Strana[];
-    prideleneMandatyPrvniKolo?: number;
-}
-
-type VysledekRepubliky = ReadonlyArray<VysledekKraje>;
-
-const POCET_MANDATU = 200;
+const { readFileSync } = require("fs");
+const { parseStringPromise } = require("xml2js");
 
 async function run() {
     const results = await parseResults();
-    const vysledekRepubliky = results.sort((k1, k2) => k1.platneHlasy - k2.platneHlasy);
-    const soucetHlasu = sectiHlasy(vysledekRepubliky);
-    const republikoveMandatoveCislo = Math.round(soucetHlasu / POCET_MANDATU);
-    const mandatyProKraje = vypoctiMandatyProKraje(vysledekRepubliky, republikoveMandatoveCislo);
-    const pocetNepridelenychMandatuKrajum = spocitejPocetNepridelenychMandatuKrajum(mandatyProKraje);
+    const vysledekRepubliky = [...results].sort((k1, k2) => k1.platneHlasy - k2.platneHlasy);
 
-    console.log(vysledekRepubliky);
-    console.log({soucetHlasu, republikoveMandatoveCislo});
-    console.log(mandatyProKraje);
-    console.log({pocetNepridelenychMandatuKrajum})
+    console.log(vysledekRepubliky.map(x => ({kraj: x.kraj, platneHlasy: x.platneHlasy})));
+
+    const vysledkySMandaty = vyhodnotPocetMandatuProKraje(vysledekRepubliky);
+
+    console.log(vysledkySMandaty.map(x => ({kraj: x.kraj, pocetMandatu: x.pocetMandatu})));
 }
 
-function spocitejPocetNepridelenychMandatuKrajum(vysledekRepubliky: VysledekRepubliky): number {
-    return POCET_MANDATU - vysledekRepubliky.reduce((p, c) => p + (c.prideleneMandatyPrvniKolo ?? 0), 0);
-}
-
-function vypoctiMandatyProKraje(vysledekRepubliky: VysledekRepubliky, republikoveMandatoveCislo: number) {
-    return vysledekRepubliky.map(kraj => {
-        return {
-            ...kraj,
-            prideleneMandatyPrvniKolo: Math.floor(kraj.platneHlasy / republikoveMandatoveCislo)
-        }
-    });
-}
-
-function sectiHlasy(vysledek: VysledekRepubliky): number {
-    return vysledek.reduce((p, c) => p + c.platneHlasy, 0);
-}
-
-async function parseResults(): Promise<VysledekKraje[]> {
-    const data = readFileSync(join('data', 'vysledky.xml'));
+async function parseResults(): Promise<VysledekRepubliky> {
+    const data = readFileSync(join("data", "vysledky.xml"));
     // xml2js automaticky typuje výsledek na any, takže přidáváme kontrolu a type-guards
-    const result = await parseStringPromise(data, { explicitArray: false }) as any;
+    const result = (await parseStringPromise(data, {
+        explicitArray: false,
+    })) as any;
 
     const krajeRaw = result?.VYSLEDKY?.KRAJ;
 
-    // Ošetření pro případ, že v XML je pouze jeden kraj
-    const kraje = Array.isArray(krajeRaw) ? krajeRaw : [krajeRaw];
-
-    return kraje.map((kraj: any) => {
+    return krajeRaw.map((kraj: any) => {
         const platneHlasy = parseInt(kraj.UCAST.$.PLATNE_HLASY, 10);
         const nazKraj = kraj.$.NAZ_KRAJ;
         const stranyArr = Array.isArray(kraj.STRANA) ? kraj.STRANA : [kraj.STRANA];
 
         const vysledkyStran: Strana[] = stranyArr.map((strana: any) => ({
             nazev: strana.$.NAZ_STR,
-            hlasy: parseInt(strana.HODNOTY_STRANA.$.HLASY, 10)
+            hlasy: parseInt(strana.HODNOTY_STRANA.$.HLASY, 10),
         }));
 
         return {
             kraj: nazKraj,
             platneHlasy: platneHlasy,
-            strany: vysledkyStran
+            strany: vysledkyStran,
         };
     });
 }
