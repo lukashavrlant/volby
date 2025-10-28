@@ -5,6 +5,7 @@ import { vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli } from "./minimalni-klau
 import { rozdelMandatyStranamDlePrvnihoSkrutinia } from "./prvni-skrutinium";
 import type { Strana, VysledekRepubliky } from "./types";
 import { vyhodnotPocetMandatuProKraje } from "./vypocet-poctu-krajskych-mandatu";
+import { rozdelMandatyStranamDleDruhehoSkrutinia } from "./druhe-skrutinium";
 
 async function run() {
     const results = await parseResults();
@@ -13,8 +14,9 @@ async function run() {
     const vysledkySMandaty = vyhodnotPocetMandatuProKraje(vysledekRepubliky);
     const vysledkyUspesnychStran = vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli(vysledkySMandaty);
     const vysledkyPrvnihoSkrutinia = rozdelMandatyStranamDlePrvnihoSkrutinia(vysledkyUspesnychStran);
+    const vysledkyDruhehoSkrutinia = rozdelMandatyStranamDleDruhehoSkrutinia(vysledkyPrvnihoSkrutinia);
 
-    console.log(JSON.stringify(vysledkyPrvnihoSkrutinia, null, 4));
+    console.log(JSON.stringify(vysledkyDruhehoSkrutinia, null, 4));
 }
 
 async function parseResults(): Promise<VysledekRepubliky> {

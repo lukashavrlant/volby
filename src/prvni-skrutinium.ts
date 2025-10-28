@@ -36,14 +36,16 @@ function spocitejCelkovyPocetPridelenychMandatu(strany: ReadonlyArray<StranaSMan
 }
 
 function priradMandatyStranam(strany: ReadonlyArray<Strana>, krajskeVolebniCislo: number): ReadonlyArray<StranaSMandaty> {
-    return strany.map((strana) => spocitejMandaty(strana, krajskeVolebniCislo)).sort((a, b) => a.zbytekPoDeleni - b.zbytekPoDeleni);
+    return strany
+        .map((strana) => spocitejMandaty(strana, krajskeVolebniCislo))
+        .sort((a, b) => a.zbytekPoDeleniVPrvnimSkrutiniu - b.zbytekPoDeleniVPrvnimSkrutiniu);
 }
 
 function spocitejMandaty(strana: Strana, krajskeVolebniCislo: number): StranaSMandaty {
     return {
         ...strana,
         mandatyPrvniSkrutinium: Math.floor(strana.hlasy / krajskeVolebniCislo),
-        zbytekPoDeleni: strana.hlasy % krajskeVolebniCislo,
+        zbytekPoDeleniVPrvnimSkrutiniu: strana.hlasy % krajskeVolebniCislo,
     };
 }
 
