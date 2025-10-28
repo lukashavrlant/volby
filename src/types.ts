@@ -3,10 +3,20 @@ export interface Strana {
     hlasy: number;
 }
 
+export interface StranaSMandaty extends Strana {
+    mandatyPrvniSkrutinium: number;
+}
+
 export interface VysledekKraje {
     kraj: string;
     platneHlasy: number;
     strany: Strana[];
+}
+
+export interface KrajPrvniSkrutinium {
+    kraj: string;
+    platneHlasy: number;
+    strany: ReadonlyArray<StranaSMandaty>;
 }
 
 export interface KrajSMandaty extends VysledekKraje {
@@ -15,3 +25,4 @@ export interface KrajSMandaty extends VysledekKraje {
 
 export type VysledekRepubliky = ReadonlyArray<VysledekKraje>;
 export type VysledekRepublikySPoctyMandatu = ReadonlyArray<KrajSMandaty>;
+export type VysledekRepublikyPrvniSkrutinium = ReadonlyArray<KrajPrvniSkrutinium>;

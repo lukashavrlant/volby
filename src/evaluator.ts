@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseStringPromise } from "xml2js";
 import { vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli } from "./minimalni-klauzule";
+import { rozdelMandatyStranamDlePrvnihoSkrutinia } from "./prvni-skrutinium";
 import type { Strana, VysledekRepubliky } from "./types";
 import { vyhodnotPocetMandatuProKraje } from "./vypocet-poctu-krajskych-mandatu";
 
@@ -11,8 +12,9 @@ async function run() {
 
     const vysledkySMandaty = vyhodnotPocetMandatuProKraje(vysledekRepubliky);
     const vysledkyUspesnychStran = vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli(vysledkySMandaty);
+    const vysledkyPrvnihoSkrutinia = rozdelMandatyStranamDlePrvnihoSkrutinia(vysledkyUspesnychStran);
 
-    console.log(JSON.stringify(vysledkyUspesnychStran, null, 4));
+    // console.log(JSON.stringify(vysledkyPrvnihoSkrutinia, null, 4));
 }
 
 async function parseResults(): Promise<VysledekRepubliky> {
