@@ -5,6 +5,7 @@ export interface Strana {
 
 export interface StranaSMandaty extends Strana {
     mandatyPrvniSkrutinium: number;
+    zbytekPoDeleni: number;
 }
 
 export interface VysledekKraje {
@@ -17,6 +18,7 @@ export interface KrajPrvniSkrutinium {
     kraj: string;
     platneHlasy: number;
     strany: ReadonlyArray<StranaSMandaty>;
+    pocetNeprirazenychMandatu: number;
 }
 
 export interface KrajSMandaty extends VysledekKraje {

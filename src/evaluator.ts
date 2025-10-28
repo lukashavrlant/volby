@@ -14,7 +14,7 @@ async function run() {
     const vysledkyUspesnychStran = vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli(vysledkySMandaty);
     const vysledkyPrvnihoSkrutinia = rozdelMandatyStranamDlePrvnihoSkrutinia(vysledkyUspesnychStran);
 
-    // console.log(JSON.stringify(vysledkyPrvnihoSkrutinia, null, 4));
+    console.log(JSON.stringify(vysledkyPrvnihoSkrutinia, null, 4));
 }
 
 async function parseResults(): Promise<VysledekRepubliky> {
