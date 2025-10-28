@@ -41,3 +41,5 @@ export interface VysledekRepublikyDruheSkrutinium {
     kraje: VysledekRepublikyPrvniSkrutinium;
     strany: StranyDruheSkrutinium;
 }
+
+export type MandatyStran = Record<string, number>;

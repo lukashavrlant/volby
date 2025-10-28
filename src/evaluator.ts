@@ -3,9 +3,10 @@ import { join } from "node:path";
 import { parseStringPromise } from "xml2js";
 import { vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli } from "./minimalni-klauzule";
 import { rozdelMandatyStranamDlePrvnihoSkrutinia } from "./prvni-skrutinium";
-import type { Strana, VysledekRepubliky } from "./types";
+import type { Strana, VysledekRepubliky, VysledekRepublikyDruheSkrutinium } from "./types";
 import { vyhodnotPocetMandatuProKraje } from "./vypocet-poctu-krajskych-mandatu";
 import { rozdelMandatyStranamDleDruhehoSkrutinia } from "./druhe-skrutinium";
+import { sectiHlasyZPrvnihoADruhehoSkrutinia } from "./utils";
 
 async function run() {
     const results = await parseResults();
@@ -15,8 +16,10 @@ async function run() {
     const vysledkyUspesnychStran = vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli(vysledkySMandaty);
     const vysledkyPrvnihoSkrutinia = rozdelMandatyStranamDlePrvnihoSkrutinia(vysledkyUspesnychStran);
     const vysledkyDruhehoSkrutinia = rozdelMandatyStranamDleDruhehoSkrutinia(vysledkyPrvnihoSkrutinia);
+    const hlasyStran = sectiHlasyZPrvnihoADruhehoSkrutinia(vysledkyDruhehoSkrutinia);
 
-    console.log(JSON.stringify(vysledkyDruhehoSkrutinia, null, 4));
+    console.log(hlasyStran);
+    // console.log(JSON.stringify(hlasyStran, null, 4));
 }
 
 async function parseResults(): Promise<VysledekRepubliky> {
