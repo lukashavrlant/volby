@@ -1,4 +1,5 @@
 import { join } from "path";
+import { vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli } from "./minimalni-klauzule";
 import type { Strana, VysledekRepubliky } from "./types";
 import { vyhodnotPocetMandatuProKraje } from "./vypocet-poctu-krajskych-mandatu";
 
@@ -9,16 +10,15 @@ async function run() {
     const results = await parseResults();
     const vysledekRepubliky = [...results].sort((k1, k2) => k1.platneHlasy - k2.platneHlasy);
 
-    console.log(vysledekRepubliky.map(x => ({kraj: x.kraj, platneHlasy: x.platneHlasy})));
-
     const vysledkySMandaty = vyhodnotPocetMandatuProKraje(vysledekRepubliky);
+    const vysledkyUspesnychStran = vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli(vysledkySMandaty);
 
-    console.log(vysledkySMandaty.map(x => ({kraj: x.kraj, pocetMandatu: x.pocetMandatu})));
+    console.log(JSON.stringify(vysledkyUspesnychStran, null, 4));
 }
 
 async function parseResults(): Promise<VysledekRepubliky> {
     const data = readFileSync(join("data", "vysledky.xml"));
-    // xml2js automaticky typuje výsledek na any, takže přidáváme kontrolu a type-guards
+
     const result = (await parseStringPromise(data, {
         explicitArray: false,
     })) as any;
