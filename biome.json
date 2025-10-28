@@ -7,5 +7,12 @@
         "lineWidth": 160,
         "indentStyle": "space",
         "indentWidth": 4
+    },
+    "linter": {
+        "rules": {
+            "suspicious": {
+                "noExplicitAny": "off"
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@
 	"scripts": {
 		"start": "ts-node src/evaluator.ts",
 		"build": "tsc",
-    "lint-fix": "npx @biomejs/biome check --write"
+    "lint-fix": "npx @biomejs/biome check --write --log-level error"
 	},
 	"repository": {
 		"type": "git",

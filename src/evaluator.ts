@@ -1,10 +1,9 @@
-import { join } from "path";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { parseStringPromise } from "xml2js";
 import { vyfiltrujStranyKtereNesplnilyUzaviraciKlauzuli } from "./minimalni-klauzule";
 import type { Strana, VysledekRepubliky } from "./types";
 import { vyhodnotPocetMandatuProKraje } from "./vypocet-poctu-krajskych-mandatu";
-
-const { readFileSync } = require("fs");
-const { parseStringPromise } = require("xml2js");
 
 async function run() {
     const results = await parseResults();
